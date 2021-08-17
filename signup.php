@@ -8,15 +8,15 @@
      $result=mysqli_query($conn,$sql);
      $num=mysqli_num_rows($result);
      if($num>0){
-      $showerr="Username already exists" ;
+      echo '<script>alert("Username already exist please enter a different username")</script>';
      }else{
          if($cpassword==$password){
            $hash=password_hash($password,PASSWORD_DEFAULT);
            $sql1=" INSERT INTO `user` ( `email`, `password`, `time`) VALUES ( '$username', '$hash', current_timestamp()) ";
            $result1=mysqli_query($conn,$sql1);
-           header('location:welcome.php');
+           header('location:profile.php');
          }else{
-             $showtext="Password should match";
+            echo '<script>alert("Confirm password and pasword did not match, please try again")</script>';
          }
      }
  }

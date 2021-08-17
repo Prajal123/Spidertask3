@@ -12,9 +12,10 @@ $result=mysqli_query($conn,$sql);
 $rows=mysqli_fetch_assoc($result);
 if($_SERVER['REQUEST_METHOD']=='POST'){
     if($rows['username']==$username){
-    $title=$_POST['title'];
+  
     $desc=$_POST['desc'];
-    $sql1="UPDATE `products` SET `product_description` = '$desc',`product_name`='$title' WHERE `products`.`product_id` = $productid";
+    $time=$_POST['time']; 
+    $sql1="UPDATE `products` SET `product_description` = '$desc', `time`='$time' WHERE `products`.`product_id` = $productid";
     $result1=mysqli_query($conn,$sql1);
     header('location:displayproduct.php?product_id='.$productid);
     }
@@ -39,9 +40,10 @@ if($_SERVER['REQUEST_METHOD']=='POST'){
  <?php include 'header.php' ?>
 
  <form action="" method="post">
- <div class="mb-3">
-    <label for="title" class="form-label">Title</label>
-    <input type="text" class="form-control" name="title">
+
+  <div class="mb-3">
+    <label for="time" class="form-label">Bid Ending Time</label>
+    <input type="text" class="form-control" name="time">
   </div>
   <div class="mb-3">
     <label for="description" class="form-label">Description</label>

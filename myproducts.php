@@ -9,16 +9,25 @@ $username=$_SESSION['username'];
 if($_SERVER['REQUEST_METHOD']=='POST'){
     $pname=$_POST['title'];
     $pdesc=$_POST['desc'];
-    $sql="INSERT INTO `products` ( `product_name`, `product_description`, `created`, `username`) VALUES ( '$pname', '$pdesc', current_timestamp(), '$username')";
+
+    $time=$_POST['time'];
+    
+    $info=pathinfo($_FILES['file']['name']);
+    $ext=$info['extension'];
+    $fileName=$pname.".".$ext;
+    $file_type=$_FILES['file']['type'];
+    $file_size=$_FILES['file']['size'];
+    $file_tmp_loc=$_FILES['file']['tmp_name'];
+    $file_store="uploads/".$fileName;
+   
+    move_uploaded_file($file_tmp_loc,$file_store);
+
+
+    $sql="INSERT INTO `products` ( `product_name`, `product_description`, `created`, `username`,`ext`,`time`) VALUES ( '$pname', '$pdesc', current_timestamp(), '$username','$ext','$time')";
     $result=mysqli_query($conn,$sql);
      
-   $file_type=$_FILES['file']['type'];
-   $fileName= $username.'.'$file_type.substring();
-   $file_size=$_FILES['file']['size'];
-   $file_tmp_loc=$_FILES['file']['tmp_name'];
-   $file_store="uploads/".$fileName;
+    echo '<script>alert("Your product has been included in Auction successfully")</script>';
   
-   move_uploaded_file($file_tmp_loc,$file_store);
     
 }
 ?>
@@ -49,6 +58,10 @@ if($_SERVER['REQUEST_METHOD']=='POST'){
     <label for="title" class="form-label">Description</label>
     <textarea name="desc" id="" cols="30" rows="10" class="form-control"></textarea>
   </div>
+  <div class="mb-3">
+    <label for="title" class="form-label">Till what date do you want bidding? Please enter like YYYY-MM-DD HH:MM:SS </label>
+    <input type="text" class="form-control" name="time" id="">
+  </div>
   <button type="submit" class="btn btn-primary">Submit</button>
 </form>
 </div>
@@ -64,10 +77,14 @@ while($rows=mysqli_fetch_assoc($result1)){
   $rows2=mysqli_fetch_assoc($result2);
   $hbid=$rows2['bid_amount'];
 echo'<div class="col-md-4 my-2"><div class="card" style="width: 18rem;">
-  <img src="..." class="card-img-top" alt="...">
   <div class="card-body">
-    <h5 class="card-title text-center">'.$rows['product_name'].'</h5>
-    <h5 class="card-title text-center">Highest bid:'.$hbid.'</h5>
+    <h5 class="card-title text-center">'.$rows['product_name'].'</h5>';
+    if($hbid==null){
+      echo '<h5 class="card-title text-center">Highest Bid:No biddings yet</h5>';
+     }else{
+     echo '<h5 class="card-title text-center">Highest Bid:'.$hbid.'</h5>';
+     }
+   echo'<img src="uploads/'.$rows['product_name'].'.'.$rows['ext'].'" width="200px" height ="100px">
     <p class="card-text">'.substr($rows['product_description'],0,20).'....</p>
     <a href="displayproduct.php?product_id='.$rows['product_id'].'" class="btn btn-primary" >Go to Product</a> 
   </div>

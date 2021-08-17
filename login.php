@@ -12,6 +12,8 @@ if($_SERVER['REQUEST_METHOD']=='POST'){
 
       if(password_verify($password,$row['password'])){
         $login=false;
+      }else{
+        echo '<script>alert("Username or Password is incorrect")</script>';
       }
     }
   }

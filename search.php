@@ -34,16 +34,26 @@ if(!isset($_SESSION['loggedin'])){
 
 <?php
 $query=$_GET['search'];
-  $sql="Select * from products where match(product_name,product_description) against ('$query')";
+  $sql="Select * from products where match (product_name,product_description) against ('$query')";
   $result=mysqli_query($conn,$sql);
   echo '<div class="container"><div class="row" >';
   $noresults=true;
   while($rows=mysqli_fetch_assoc($result)){
+    $id=$rows['product_id'];
   $noresults=false;
+  $sql2="Select * from bid WHERE product_id='$id' order by `bid`.`bid_amount` DESC";
+  $result2=mysqli_query($conn,$sql2);
+  $rows2=mysqli_fetch_assoc($result2);
+  $hbid=$rows2['bid_amount'];
   echo'<div class="col-md-4 my-2"><div class="card " style="width: 18rem;">
-    <img src="..." class="card-img-top" alt="...">
-    <div class="card-body">
-      <h5 class="card-title text-center">'.$rows['product_name'].'</h5>
+
+   <div class="card-body"><h5 class="card-title text-center">'.$rows['product_name'].'</h5>';
+   if($hbid==null){
+    echo '<h5 class="card-title text-center">Highest Bid:No biddings yet</h5>';
+   }else{
+   echo '<h5 class="card-title text-center">Highest Bid:'.$hbid.'</h5>';
+   }
+    echo' <img src="uploads/'.$rows['product_name'].'.'.$rows['ext'].'" width="200px" height ="100px">
       <p class="card-text">'.substr($rows['product_description'],0,20).'....</p>
       <a href="displayproduct.php?product_id='.$rows['product_id'].'" class="btn btn-primary" >Go to Product</a> 
     </div>

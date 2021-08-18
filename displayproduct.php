@@ -1,53 +1,3 @@
-<?php
-include 'config.php';
-session_start();
-if(!isset($_SESSION['loggedin'])){
- header('location:login.php');
- exit;
-}
-$username=$_SESSION['username'];
-$productid=$_GET['product_id'];
-     if(isset($_POST['post1'])){
-         $bid=$_POST['bidding'];
-         $sql1="INSERT INTO `bid` ( `product_id`, `username`, `currentime`,`bid_amount`) VALUES ('$productid', '$username', current_timestamp(),'$bid')";
-         $result1=mysqli_query($conn,$sql1);
-         echo '<script>alert("You have successfully given a bid for this product")</script>';
-     }else if(isset($_POST['update'])){
-         header('location:update.php?product_id='.$productid);
-         echo '<script>alert("You have successfully updated your product")</script>';
-     }
-     else if(isset($_POST['delete'])){
-      $sql2=" DELETE FROM `products` WHERE `products`.`product_id` = $productid";
-      $result2=mysqli_query($conn,$sql2);
-      header('location:myproducts.php?username='.$username);
-      echo '<script>alert("You have successfully deleted your product")</script>';
-     }
-     else if(isset($_POST['comment'])){
-         $desc=$_POST['desc'];
-         $sql3="INSERT INTO `comments` ( `product_id`, `username`, `currentime`, `comment`) VALUES ( '$productid', '$username', current_timestamp(), '$desc');";
-         $result3=mysqli_query($conn,$sql3);
-         echo '<script>alert("Your comment has been successfully accepted")</script>';
-     }
-
-  
-
-$sql5="Select * from comments where product_id='$productid'";
-$result5=mysqli_query($conn,$sql5);
-while($rows=mysqli_fetch_assoc($result5)){
-   $id=$rows['id'];
-   if(isset($_POST[$id.'up'])){
-       header('location:update1.php?comment_id='.$id.'&product_id='.$productid);
-       echo '<script>alert("You have successfully updated your comment")</script>';
-   }
-   else if(isset($_POST[$id.'dl'])){
-       $sql6="DELETE FROM `comments` WHERE `comments`.`id` = $id";
-       $result6=mysqli_query($conn,$sql6);
-       echo '<script>alert("You have successfully deleted your comment")</script>';
-   }
-}
-     
-?>
-
 <!doctype html>
 <html lang="en">
   <head>
@@ -62,45 +12,67 @@ while($rows=mysqli_fetch_assoc($result5)){
 <link href='assets/jquery-bar-rating/dist/themes/fontawesome-stars.css' rel='stylesheet' type='text/css'>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 <script src="assets/jquery-bar-rating/dist/jquery.barrating.min.js" type="text/javascript"></script>
+
+
+<link href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.css" rel="stylesheet"/>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+
     <title>Hello, world!</title>
   </head>
-  <script>
-    $(function() {
- $('.rating').barrating({
-  theme: 'fontawesome-stars',
-  onSelect: function(value, text, event) {
-    
-    alert("You have successfully given rating to this product");
- 
-   var el = this;
-   var el_id = el.$elem.data('id');
-
-   
-   if (typeof(event) !== 'undefined') {
- 
-     var split_id = el_id.split("_");
-     var productid = split_id[1]; 
-
-    
-     $.ajax({
-       url: 'rating_ajax.php',
-       type: 'post',
-       data: {productid:productid,rating:value},
-       dataType: 'json',
-       success: function(data){
-        
-         var average = data['averageRating'];
-         $('#avgrating_'+productid).text(average);
-       }
-     });
-   }
-  }
- });
-});
-    </script>
 
   <body>
  <?php include 'header.php' ?>
+<?php
+include 'config.php';
+session_start();
+if(!isset($_SESSION['loggedin'])){
+ header('location:login.php');
+ exit;
+}
+$username=$_SESSION['username'];
+$productid=$_GET['product_id'];
+     if(isset($_POST['post1'])){
+         $bid=$_POST['bidding'];
+         $sql1="INSERT INTO `bid` ( `product_id`, `username`, `currentime`,`bid_amount`) VALUES ('$productid', '$username', current_timestamp(),'$bid')";
+         $result1=mysqli_query($conn,$sql1);
+         echo '<script>toastr.success("You have successfully given a bid for this product")</script>';
+     }else if(isset($_POST['update'])){
+         header('location:update.php?product_id='.$productid);
+         echo '<script>toastr.success("You have successfully updated your product")</script>';
+     }
+     else if(isset($_POST['delete'])){
+      $sql2=" DELETE FROM `products` WHERE `products`.`product_id` = $productid";
+      $result2=mysqli_query($conn,$sql2);
+      header('location:myproducts.php?username='.$username);
+      echo '<script>toastr.success("You have successfully deleted your product")</script>';
+     }
+     else if(isset($_POST['comment'])){
+         $desc=$_POST['desc'];
+         $sql3="INSERT INTO `comments` ( `product_id`, `username`, `currentime`, `comment`) VALUES ( '$productid', '$username', current_timestamp(), '$desc');";
+         $result3=mysqli_query($conn,$sql3);
+         echo '<script>toastr.success("Your comment has been successfully accepted")</script>';
+     }
+
+  
+
+$sql5="Select * from comments where product_id='$productid'";
+$result5=mysqli_query($conn,$sql5);
+while($rows=mysqli_fetch_assoc($result5)){
+   $id=$rows['id'];
+   if(isset($_POST[$id.'up'])){
+       header('location:update1.php?comment_id='.$id.'&product_id='.$productid);
+       echo '<script>toastr.success("You have successfully updated your comment")</script>';
+   }
+   else if(isset($_POST[$id.'dl'])){
+       $sql6="DELETE FROM `comments` WHERE `comments`.`id` = $id";
+       $result6=mysqli_query($conn,$sql6);
+       echo '<script>toastr.success("You have successfully deleted your comment")</script>';
+   }
+}
+     
+?>
+
+
 
  <?php 
  $sql="Select * from products where product_id='$productid'";
@@ -229,7 +201,40 @@ while($row=mysqli_fetch_assoc($result4)){
    
 }
 ?>
+  <script>
+    $(function() {
+ $('.rating').barrating({
+  theme: 'fontawesome-stars',
+  onSelect: function(value, text, event) {
+    
+    toastr.success("You have successfully given rating to this product");
+ 
+   var el = this;
+   var el_id = el.$elem.data('id');
 
+   
+   if (typeof(event) !== 'undefined') {
+ 
+     var split_id = el_id.split("_");
+     var productid = split_id[1]; 
+
+    
+     $.ajax({
+       url: 'rating_ajax.php',
+       type: 'post',
+       data: {productid:productid,rating:value},
+       dataType: 'json',
+       success: function(data){
+        
+         var average = data['averageRating'];
+         $('#avgrating_'+productid).text(average);
+       }
+     });
+   }
+  }
+ });
+});
+    </script>
 </body>
 
 

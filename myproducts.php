@@ -26,7 +26,7 @@ if($_SERVER['REQUEST_METHOD']=='POST'){
     $sql="INSERT INTO `products` ( `product_name`, `product_description`, `created`, `username`,`ext`,`time`) VALUES ( '$pname', '$pdesc', current_timestamp(), '$username','$ext','$time')";
     $result=mysqli_query($conn,$sql);
      
-    echo '<script>alert("Your product has been included in Auction successfully")</script>';
+    echo '<script>toaster.success("Your product has been included in Auction successfully")</script>';
   
     
 }
